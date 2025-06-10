@@ -11,7 +11,8 @@ import elliptic_curves as ec
 from aes_ctr_rspy import AesCtrSecret as ACS
 
 def main():
-    secp256k1, G = get_curve_g()
+    secp256k1, G = get_curve_r()
+
     ipvfour = input("IPv4: ")
     if ipvfour == "":
         ipvfour = "127.0.0.100"
@@ -115,7 +116,7 @@ def client(ipvfour : str, portnumber: int, curve, G):
     print("Closing connection")
     client_socket.close()
 
-def get_curve_g():
+def get_curve_k():
     secp256k1 = ec.EllipticCurve(
         0, 
         7, 
@@ -128,6 +129,21 @@ def get_curve_g():
         0x483ADA77_26A3C465_5DA4FBFC_0E1108A8_FD17B448_A6855419_9C47D08F_FB10D4B8
     )
     return (secp256k1, G)
+
+
+def get_curve_r():
+    secp256r1 = ec.EllipticCurve(
+        0xffffffff_00000001_00000000_00000000_00000000_ffffffff_ffffffff_fffffffc,
+        0x5ac635d8_aa3a93e7_b3ebbd55_769886bc_651d06b0_cc53b0f6_3bce3c3e_27d2604b,
+        0xffffffff_00000001_00000000_00000000_00000000_ffffffff_ffffffff_ffffffff
+    )
+
+    G = ec.ECPoint(
+        secp256r1, 
+        0x6b17d1f2_e12c4247_f8bce6e5_63a440f2_77037d81_2deb33a0_f4a13945_d898c296, 
+        0x4fe342e2_fe1a7f9b_8ee7eb4a_7c0f9e16_2bce3357_6b315ece_cbb64068_37bf51f5
+    )
+    return (secp256r1, G)
 
 def gen_keypair(curve, G):
     pri_key = randint(1, curve.p - 1)
